@@ -30,26 +30,30 @@
     </div>
 
     <script>
-        function updateClientInfo() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const contextParam = urlParams.get("context");
+         microsoftTeams.app.initialize().then(() => {
+            microsoftTeams.app.getContext().then(context => {
+                console.log("Teams Context:", context);
 
-            if (contextParam) {
+                let data = {};
+                
                 try {
-                    const context = JSON.parse(decodeURIComponent(contextParam));
-
-                    // Проверяем, есть ли нужные данные в контексте
-                    if (context.firstName) document.getElementById("client-name").innerText = `Имя: ${context.firstName}`;
-                    if (context.lastName) document.getElementById("client-surname").innerText = `Фамилия: ${context.lastName}`;
-                    if (context.patronymic) document.getElementById("client-patronymic").innerText = `Отчество: ${context.patronymic}`;
-                    if (context.inn) document.getElementById("client-inn").innerText = `ИНН: ${context.inn}`;
+                    if (context.subEntityId) {
+                        data = JSON.parse(context.subEntityId);  // Берем данные из subEntityId
+                    } else if (context.entityId) {
+                        data = JSON.parse(context.entityId);  // Или entityId
+                    }
                 } catch (error) {
                     console.error("Ошибка парсинга context:", error);
                 }
-            }
-        }
 
-        updateClientInfo();
+                if (data.firstName) document.getElementById("client-name").innerText = `Имя: ${data.firstName}`;
+                if (data.lastName) document.getElementById("client-surname").innerText = `Фамилия: ${data.lastName}`;
+                if (data.patronymic) document.getElementById("client-patronymic").innerText = `Отчество: ${data.patronymic}`;
+                if (data.inn) document.getElementById("client-inn").innerText = `ИНН: ${data.inn}`;
+            }).catch(error => {
+                console.error("Ошибка получения контекста Teams:", error);
+            });
+        });
     </script>
 </body>
 </html>
