@@ -10,10 +10,10 @@
     <div class="main">
         <div class="client-info">
             <h2>Клиент</h2>
-            <p>Имя: Ivan</p>
-            <p>Фамилия: Ivanov</p>
-            <p>Отчество: Ivanovich</p>
-            <p>ИНН: 010203445654</p>
+            <p id="client-name">Имя: Ivan</p>
+            <p id="client-surname">Фамилия: Ivanov</p>
+            <p id="client-patronymic">Отчество: Ivanovich</p>
+            <p id="client-inn">ИНН: 010203445654</p>
         </div>
 
         <div class="owner-info">
@@ -28,5 +28,28 @@
             <p>Номер кредита: 04123BK102930</p>
         </div>
     </div>
+
+    <script>
+        function updateClientInfo() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const contextParam = urlParams.get("context");
+
+            if (contextParam) {
+                try {
+                    const context = JSON.parse(decodeURIComponent(contextParam));
+
+                    // Проверяем, есть ли нужные данные в контексте
+                    if (context.firstName) document.getElementById("client-name").innerText = `Имя: ${context.firstName}`;
+                    if (context.lastName) document.getElementById("client-surname").innerText = `Фамилия: ${context.lastName}`;
+                    if (context.patronymic) document.getElementById("client-patronymic").innerText = `Отчество: ${context.patronymic}`;
+                    if (context.inn) document.getElementById("client-inn").innerText = `ИНН: ${context.inn}`;
+                } catch (error) {
+                    console.error("Ошибка парсинга context:", error);
+                }
+            }
+        }
+
+        updateClientInfo();
+    </script>
 </body>
 </html>
